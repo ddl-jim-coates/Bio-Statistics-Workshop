@@ -765,7 +765,7 @@ def train_adverse_event_model(model_obj, model_name, transformed_df_filename, ra
     transformed_df = pd.read_csv(transformed_df_path)
     
     # Split data 
-    labels = "Class"
+    labels = "AdverseEvents"
     df = transformed_df.dropna(subset=[labels]).copy()
     features = [c for c in df.columns if c != labels]
     X = df[features]

@@ -30,15 +30,15 @@ from flytekitplugins.domino.artifact import Artifact, DATA, MODEL, REPORT
 
 
 # Directories
-experiment_name = f"CC Fraud Classifier Training {domino_short_id()}"
+experiment_name = f"Clinical Trial AE Prediction {domino_short_id()}"
 domino_working_dir = os.environ.get("DOMINO_WORKING_DIR", ".")
 domino_project_name = os.environ.get("DOMINO_PROJECT_NAME", "my-local-project")
 domino_artifact_dir = domino_working_dir.replace('code', 'artifacts')
 domino_dataset_dir = f"{domino_working_dir.replace('code', 'data')}/{domino_project_name}"
 
-ModelArtifact = Artifact(name="Fraud Detection Models", type=MODEL)
-DataArtifact = Artifact(name="Training Data", type=DATA)
-ReportArtifact = Artifact(name="Model Reports", type=REPORT)
+ModelArtifact = Artifact(name="Adverse Event Prediction Models", type=MODEL)
+DataArtifact = Artifact(name="Clinical Trial Data", type=DATA)
+ReportArtifact = Artifact(name="Model Performance Reports", type=REPORT)
 
 plt.style.use('seaborn-v0_8-whitegrid')
 sns.set_palette("Set2")
@@ -332,9 +332,9 @@ def plot_model_performance_quad(y_val, proba, pred, name, save_path):
     
     ax3.set_facecolor('white')
     ax3.set_xticks([0, 1])
-    ax3.set_xticklabels(['Normal', 'Fraud'], fontsize=11, fontweight='600', color='#2C3E50')
+    ax3.set_xticklabels(['Normal', 'Adverse Event'], fontsize=11, fontweight='600', color='#2C3E50')
     ax3.set_yticks([0, 1])
-    ax3.set_yticklabels(['Normal', 'Fraud'], fontsize=11, fontweight='600', color='#2C3E50')
+    ax3.set_yticklabels(['Normal', 'Adverse Event'], fontsize=11, fontweight='600', color='#2C3E50')
     ax3.set_xlabel('Predicted', fontsize=12, fontweight='600', color='#2C3E50')
     ax3.set_ylabel('Actual', fontsize=12, fontweight='600', color='#2C3E50')
     ax3.set_title('Confusion Matrix', fontsize=14, fontweight='700', color='#2C3E50')
@@ -428,17 +428,17 @@ def plot_feature_analysis_quad(model, features, X_val, y_val, proba, save_path):
     ax1.tick_params(colors='#2C3E50', labelsize=9)
     
     # 2. Prediction Distribution by Class (top right)
-    fraud_proba = proba[y_val == 1]
+    adverse_proba = proba[y_val == 1]
     normal_proba = proba[y_val == 0]
     
     ax2.hist(normal_proba, bins=30, alpha=0.7, color=COLORS['success'], 
              label=f'Normal (n={len(normal_proba)})', density=True)
-    ax2.hist(fraud_proba, bins=30, alpha=0.7, color=COLORS['danger'], 
-             label=f'Fraud (n={len(fraud_proba)})', density=True)
+    ax2.hist(adverse_proba, bins=30, alpha=0.7, color=COLORS['danger'], 
+             label=f'Adverse Event (n={len(adverse_proba)})', density=True)
     
     ax2.axvline(np.mean(normal_proba), color=COLORS['success'], linestyle='--', 
                 linewidth=2, alpha=0.8)
-    ax2.axvline(np.mean(fraud_proba), color=COLORS['danger'], linestyle='--', 
+    ax2.axvline(np.mean(adverse_proba), color=COLORS['danger'], linestyle='--', 
                 linewidth=2, alpha=0.8)
     
     ax2.set_facecolor('white')
@@ -651,9 +651,9 @@ def train_and_log(
             "roc_auc": roc,
             "pr_auc": pr,
             "accuracy": acc,
-            "precision_fraud": prec,
-            "recall_fraud": rec,
-            "f1_fraud": f1,
+            "precision_adverse": prec,
+            "recall_adverse": rec,
+            "f1_adverse": f1,
             "fit_time_sec": fit_time,
             "predict_time_sec": predict_time,
             "inf_ms_row": inf_ms_row,
@@ -672,7 +672,7 @@ def train_and_log(
         summary_metrics = {
             'model_name': name,
             'validation_samples': int(len(y_val)),
-            'fraud_samples': int(sum(y_val)),
+            'adverse_event_samples': int(sum(y_val)),
             **metrics
         }
         metrics_df = pd.DataFrame([summary_metrics])
@@ -718,9 +718,9 @@ def train_and_log(
             "calib_slope": calib_slope,
             "calib_intercept": calib_intercept,
             "accuracy": float(acc),
-            "precision_fraud": float(prec),
-            "recall_fraud": float(rec),
-            "f1_fraud": float(f1),
+            "precision_adverse": float(prec),
+            "recall_adverse": float(rec),
+            "f1_adverse": float(f1),
             "tau_default": 0.5,
             "tn": int(tn), "fp": int(fp), "fn": int(fn), "tp": int(tp),
             "fit_time_sec": float(fit_time),
@@ -755,7 +755,7 @@ def train_and_log(
     return ret
 
 
-def train_fraud(model_obj, model_name, transformed_df_filename, random_state=None):
+def train_adverse_event_model(model_obj, model_name, transformed_df_filename, random_state=None):
 
     # Set up experiment
     mlflow.set_experiment(experiment_name)
@@ -777,8 +777,8 @@ def train_fraud(model_obj, model_name, transformed_df_filename, random_state=Non
 
     data_summary = {
         'total_samples': len(df),
-        'fraud_samples': sum(y),
-        'fraud_rate': sum(y) / len(y),
+        'adverse_event_samples': sum(y),
+        'adverse_event_rate': sum(y) / len(y),
         'features': features,
         'train_samples': len(X_train),
         'val_samples': len(X_val)

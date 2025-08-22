@@ -145,12 +145,12 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-st.markdown('<h1 class="main-header">🔒 Fraud Detection App</h1>', unsafe_allow_html=True)
+st.markdown('<h1 class="main-header">🏥 Clinical Trial Adverse Event Risk Assessment</h1>', unsafe_allow_html=True)
 
 # Add model selection dropdown
-st.subheader("🤖 Model Selection")
+st.subheader("🧬 Predictive Model Selection")
 selected_model = st.selectbox(
-    "Choose Classifier Model",
+    "Choose Risk Prediction Model",
     options=list(model_scaling_dict.keys()),
     index=2  # Default to GaussianNB
 )
@@ -159,47 +159,47 @@ selected_model = st.selectbox(
 col1, col2, col3 = st.columns(3)
 
 with col1:
-    st.subheader("💰 Transaction Details")
-    amount = st.number_input("Amount", min_value=0.01, value=50.0, step=0.01)
-    hour = st.selectbox("Hour", range(24), index=12)
-    tx_type = st.selectbox("Transaction Type", ["purchase", "transfer", "payment", "withdrawal"])
-    card_present = st.selectbox("Card Present", [0, 1], format_func=lambda x: "Yes" if x else "No")
+    st.subheader("📊 Clinical Measurements")
+    amount = st.number_input("BMI", min_value=15.0, value=26.5, step=0.1)
+    hour = st.selectbox("Visit Hour", range(8, 18), index=2)
+    tx_type = st.selectbox("Treatment Arm", ["placebo", "low_dose", "standard_dose", "high_dose"])
+    card_present = st.selectbox("In-Person Visit", [0, 1], format_func=lambda x: "Yes" if x else "No")
 
 with col2:
-    st.subheader("👤 Customer Profile")
-    age = st.slider("Age", 18, 80, 35)
-    tenure = st.slider("Tenure (years)", 0, 30, 5)
-    txn_24h = st.number_input("Transactions in 24h", min_value=0, value=1, step=1)
-    avg_30d = st.number_input("Avg 30d Amount", value=0.0, step=0.01)
+    st.subheader("👤 Patient Demographics")
+    age = st.slider("Age", 18, 85, 55)
+    tenure = st.slider("Years with Condition", 0, 30, 5)
+    txn_24h = st.number_input("Prior Medications", min_value=0, value=3, step=1)
+    avg_30d = st.number_input("Baseline Biomarker", value=25.0, step=0.1)
 
 with col3:
-    st.subheader("🔍 Risk Factors")
-    merchant_risk = st.slider("Merchant Risk", -3.0, 3.0, 0.0, 0.1)
-    device_trust = st.slider("Device Trust", -3.0, 3.0, 0.0, 0.1)
-    ip_reputation = st.slider("IP Reputation", -3.0, 3.0, 0.0, 0.1)
-    dist_from_home = st.slider("Distance from Home", -2.0, 5.0, 0.0, 0.1)
+    st.subheader("⚠️ Risk Indicators")
+    merchant_risk = st.slider("Comorbidity Score", 0.0, 10.0, 3.0, 0.1)
+    device_trust = st.slider("Treatment Adherence %", 0.0, 100.0, 85.0, 1.0)
+    ip_reputation = st.slider("Genetic Risk Score", 0.0, 100.0, 20.0, 1.0)
+    dist_from_home = st.slider("Distance from Care (km)", 0.0, 200.0, 20.0, 1.0)
 
-# Location and merchant details
-st.subheader("📍 Location & Merchant")
+# Clinical site and visit details
+st.subheader("🏥 Clinical Site & Visit")
 col4, col5 = st.columns(2)
 
 with col4:
-    latitude = st.number_input("Latitude", value=40.0, step=0.01)
-    longitude = st.number_input("Longitude", value=-75.0, step=0.01)
+    latitude = st.number_input("Site Latitude", value=40.0, step=0.01)
+    longitude = st.number_input("Site Longitude", value=-75.0, step=0.01)
     
 with col5:
-    device_type = st.selectbox("Device Type", ["mobile", "desktop", "ATM", "tablet"])
-    merchant_cat = st.selectbox("Merchant Category", 
-                               ["grocery", "gas", "electronics", "travel", "clothing", "entertainment", "restaurant"])
-    channel = st.selectbox("Channel", ["online", "in-store", "contactless", "chip"])
+    device_type = st.selectbox("Visit Type", ["screening", "baseline", "week_4", "week_12", "followup"])
+    merchant_cat = st.selectbox("Site Category", 
+                               ["academic_medical", "community_hospital", "specialty_clinic", "research_center", "private_practice"])
+    channel = st.selectbox("Collection Method", ["in_person", "telemedicine", "home_visit", "ePRO"])
 
 # Prediction button and results
 st.markdown("---")
-predict_button = st.button("🔍 Predict Fraud Risk", type="primary")
+predict_button = st.button("🔬 Assess Adverse Event Risk", type="primary")
 
 if predict_button:
     # Show loading spinner
-    with st.spinner("Analyzing transaction... 🔍"):
+    with st.spinner("Analyzing patient data... 🔬"):
         time.sleep(2)  # Simulate API call
 
         
@@ -316,50 +316,50 @@ if predict_button:
 
         
         
-        # Dummy prediction logic (you can replace this with actual model)
+        # Clinical risk assessment logic (demo purposes)
         final_risk_score = random.uniform(0, 1)
         
-        # Simple heuristic for demo
+        # Clinical risk factors for adverse events
         risk_factors = [
-            amount > 500,
-            merchant_risk > 1.0,
-            device_trust < -1.0,
-            ip_reputation < -1.0,
-            dist_from_home > 2.0,
-            hour in [0, 1, 2, 3, 4, 5, 23]
+            amount > 30,  # BMI > 30 (obesity)
+            merchant_risk > 5.0,  # High comorbidity score
+            device_trust < 70.0,  # Low adherence
+            ip_reputation > 40.0,  # High genetic risk
+            dist_from_home > 50.0,  # Far from care facility
+            tx_type == "high_dose"  # High dose treatment
         ]
         
         final_risk_score = sum(risk_factors) / len(risk_factors)
         is_fraud = final_risk_score > 0.4
         
-        # Display results
+        # Display clinical risk assessment results
         if is_fraud:
             st.markdown(f"""
             <div class="prediction-box fraud-alert">
-                <h2>⚠️ FRAUD ALERT</h2>
-                <h3>Risk Score: {final_risk_score:.2%}</h3>
-                <p>This transaction has been flagged as potentially fraudulent.</p>
-                <p>Please review manually before processing.</p>
+                <h2>⚠️ HIGH RISK PATIENT</h2>
+                <h3>Adverse Event Risk: {final_risk_score:.2%}</h3>
+                <p>This patient has elevated risk for serious adverse events.</p>
+                <p>Recommend enhanced monitoring and safety protocols.</p>
                 <p><strong>Model Used:</strong> {selected_model}</p>
             </div>
             """, unsafe_allow_html=True)
         else:
             st.markdown(f"""
             <div class="prediction-box safe-alert">
-                <h2>✅ TRANSACTION APPROVED</h2>
-                <h3>Risk Score: {final_risk_score:.2%}</h3>
-                <p>This transaction appears to be legitimate.</p>
-                <p>Safe to process.</p>
+                <h2>✅ LOW RISK PATIENT</h2>
+                <h3>Adverse Event Risk: {final_risk_score:.2%}</h3>
+                <p>This patient shows low risk for adverse events.</p>
+                <p>Standard monitoring protocols appropriate.</p>
                 <p><strong>Model Used:</strong> {selected_model}</p>
             </div>
             """, unsafe_allow_html=True)
         
-        # Show risk factors breakdown
-        st.subheader("📊 Risk Analysis")
+        # Show clinical risk factors breakdown
+        st.subheader("📊 Clinical Risk Factor Analysis")
         
         risk_data = {
-            "Factor": ["High Amount", "Merchant Risk", "Device Trust", "IP Reputation", "Distance", "Unusual Hour"],
-            "Score": [amount/1000, merchant_risk, device_trust, ip_reputation, dist_from_home, 1 if hour in [0,1,2,3,4,5,23] else 0],
+            "Factor": ["BMI > 30", "High Comorbidity", "Low Adherence", "Genetic Risk", "Distance from Care", "High Dose"],
+            "Value": [f"{amount:.1f}", f"{merchant_risk:.1f}", f"{device_trust:.0f}%", f"{ip_reputation:.0f}", f"{dist_from_home:.0f} km", tx_type],
             "Status": ["⚠️" if factor else "✅" for factor in risk_factors]
         }
         
@@ -369,6 +369,6 @@ if predict_button:
 # Footer
 st.markdown("---")
 st.markdown(
-    "<p style='text-align: center; color: #666;'>🔒 Fraud Detection System v1.0 | Built with Streamlit</p>",
+    "<p style='text-align: center; color: #666;'>🏥 Clinical Trial Safety Assessment v1.0 | Built with Streamlit</p>",
     unsafe_allow_html=True
 )

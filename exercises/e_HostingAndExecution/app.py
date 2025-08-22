@@ -5,7 +5,11 @@ import random
 import pandas as pd
 import numpy as np
 import requests
-from exercises.c_DataEngineering.data_engineering import add_derived_features
+# Import add_derived_features function
+import sys
+import os
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'c_DataEngineering'))
+from data_engineering import add_derived_features
 
 feature_scaling_endpoint = os.environ['feature_scaling_endpoint']
 feature_scaling_auth = os.environ['feature_scaling_auth']

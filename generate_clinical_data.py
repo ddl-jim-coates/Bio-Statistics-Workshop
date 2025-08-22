@@ -220,32 +220,33 @@ def generate_clinical_trial_data(n_samples=100000):
 
 def create_column_mapping():
     """
-    Create a mapping between clinical and original column names
-    to minimize code changes
+    Create a mapping between clinical column names and legacy column names
+    for backwards compatibility with existing code
     """
-    mapping = {
-        'Time': 'Time',  # Days since enrollment
-        'BMI': 'Amount',  # BMI maps to Amount
+    # For the clinical workshop, we'll use clinical names directly
+    clinical_to_legacy = {
+        'Time': 'Time',
+        'BMI': 'BMI',  # Keep clinical name
         'Age': 'Age',
-        'YearsWithCondition': 'Tenure',  # Years with condition maps to Tenure
-        'ComorbidityScore': 'MerchantRisk',  # Comorbidity maps to risk
-        'Adherence': 'DeviceTrust',  # Adherence maps to trust
-        'PriorMedications': 'Txn24h',  # Prior meds maps to recent transactions
-        'BaselineBiomarker': 'Avg30d',  # Baseline biomarker maps to average
-        'GeneticRisk': 'IPReputation',  # Genetic risk maps to reputation
+        'YearsWithCondition': 'YearsWithCondition',  # Keep clinical name
+        'ComorbidityScore': 'ComorbidityScore',  # Keep clinical name
+        'Adherence': 'Adherence',  # Keep clinical name
+        'PriorMedications': 'PriorMedications',  # Keep clinical name
+        'BaselineBiomarker': 'BaselineBiomarker',  # Keep clinical name
+        'GeneticRisk': 'GeneticRisk',  # Keep clinical name
         'Latitude': 'Latitude',
         'Longitude': 'Longitude',
-        'DistanceFromCare': 'DistFromHome',  # Distance from care
-        'VisitHour': 'Hour',  # Visit hour
-        'InPerson': 'CardPresent',  # In-person visit maps to card present
-        'TreatmentArm': 'TxType',  # Treatment arm maps to transaction type
-        'VisitType': 'DeviceType',  # Visit type maps to device type
-        'SiteCategory': 'MerchantCat',  # Site category maps to merchant category
-        'CollectionMethod': 'Channel',  # Collection method maps to channel
-        'Generation': 'generation',
-        'AdverseEvent': 'Class'  # Adverse event maps to fraud class
+        'DistanceFromCare': 'DistanceFromCare',  # Keep clinical name
+        'VisitHour': 'VisitHour',  # Keep clinical name
+        'InPerson': 'InPerson',  # Keep clinical name
+        'TreatmentArm': 'TreatmentArm',  # Keep clinical name
+        'VisitType': 'VisitType',  # Keep clinical name
+        'SiteCategory': 'SiteCategory',  # Keep clinical name
+        'CollectionMethod': 'CollectionMethod',  # Keep clinical name
+        'Generation': 'Generation',
+        'AdverseEvent': 'AdverseEvent'  # Keep clinical name
     }
-    return mapping
+    return clinical_to_legacy
 
 def main():
     """
@@ -253,36 +254,23 @@ def main():
     """
     print("Generating synthetic clinical trial data...")
     
-    # Generate main dataset
+    # Generate main dataset with clinical column names
     df_clinical = generate_clinical_trial_data(n_samples=100000)
-    
-    # Create mapped version for code compatibility
-    mapping = create_column_mapping()
-    df_mapped = df_clinical.rename(columns={v: k for k, v in mapping.items() if k != v})
-    
-    # For compatibility, rename columns to match original structure
-    df_compat = df_clinical.copy()
-    for clinical_col, original_col in mapping.items():
-        if clinical_col in df_compat.columns:
-            df_compat = df_compat.rename(columns={clinical_col: original_col})
     
     # Save datasets
     output_dir = 'data'
     os.makedirs(output_dir, exist_ok=True)
     
-    # Save clinical version (with descriptive names)
+    # Save clinical trial data with proper clinical column names
     df_clinical.to_csv(f'{output_dir}/clinical_trial_data.csv', index=False)
     print(f"✓ Saved clinical trial data: {output_dir}/clinical_trial_data.csv")
     
-    # Save compatible version (for minimal code changes)
-    df_compat.to_csv(f'{output_dir}/clean_cc_transactions.csv', index=False)
-    print(f"✓ Saved compatible data: {output_dir}/clean_cc_transactions.csv")
+    # Save with filename expected by existing pipeline (but using clinical columns)
+    df_clinical.to_csv(f'{output_dir}/clean_trial_data.csv', index=False)
+    print(f"✓ Saved pipeline data: {output_dir}/clean_trial_data.csv")
     
     # Generate smaller dataset for testing
     df_test = generate_clinical_trial_data(n_samples=10000)
-    for clinical_col, original_col in mapping.items():
-        if clinical_col in df_test.columns:
-            df_test = df_test.rename(columns={clinical_col: original_col})
     df_test.to_csv(f'{output_dir}/test_clinical_data.csv', index=False)
     print(f"✓ Saved test dataset: {output_dir}/test_clinical_data.csv")
     

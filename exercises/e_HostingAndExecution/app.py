@@ -36,19 +36,19 @@ model_scaling_dict = {
 
 # Define schema once at module level
 CLASSIFIER_SCHEMA = [
-    'num__Time', 'num__Amount', 'num__Age', 'num__Tenure', 'num__MerchantRisk',
-    'num__DeviceTrust', 'num__Txn24h', 'num__Avg30d', 'num__IPReputation',
-    'num__Latitude', 'num__Longitude', 'num__DistFromHome', 'num__Hour',
-    'num__CardPresent', 'num__amount_vs_avg30d_ratio', 'num__risk_score',
-    'num__trust_score', 'cat__TxType_payment', 'cat__TxType_purchase',
-    'cat__TxType_transfer', 'cat__TxType_withdrawal', 'cat__DeviceType_ATM',
-    'cat__DeviceType_POS', 'cat__DeviceType_desktop', 'cat__DeviceType_mobile',
-    'cat__DeviceType_web', 'cat__MerchantCat_clothing', 'cat__MerchantCat_electronics',
-    'cat__MerchantCat_entertainment', 'cat__MerchantCat_gas', 'cat__MerchantCat_grocery',
-    'cat__MerchantCat_restaurant', 'cat__MerchantCat_travel', 'cat__MerchantCat_utilities',
-    'cat__Channel_chip', 'cat__Channel_contactless', 'cat__Channel_in-store',
-    'cat__Channel_online', 'cat__generation_Baby Boomer', 'cat__generation_Generation X',
-    'cat__generation_Generation Z', 'cat__generation_Millennial'
+    'num__Time', 'num__BMI', 'num__Age', 'num__YearsWithCondition', 'num__ComorbidityScore',
+    'num__Adherence', 'num__PriorMedications', 'num__BaselineBiomarker', 'num__GeneticRisk',
+    'num__Latitude', 'num__Longitude', 'num__DistanceFromCare', 'num__VisitHour',
+    'num__InPerson', 'num__bmi_biomarker_ratio', 'num__clinical_risk_score',
+    'num__adherence_risk_balance', 'cat__TreatmentArm_high_dose', 'cat__TreatmentArm_low_dose',
+    'cat__TreatmentArm_placebo', 'cat__TreatmentArm_standard_dose', 'cat__VisitType_baseline',
+    'cat__VisitType_followup', 'cat__VisitType_screening', 'cat__VisitType_week_12',
+    'cat__VisitType_week_4', 'cat__SiteCategory_academic_medical', 'cat__SiteCategory_community_hospital',
+    'cat__SiteCategory_private_practice', 'cat__SiteCategory_research_center', 'cat__SiteCategory_specialty_clinic',
+    'cat__SiteCategory_university_hospital', 'cat__SiteCategory_va_hospital', 'cat__SiteCategory_regional_medical',
+    'cat__CollectionMethod_ePRO', 'cat__CollectionMethod_home_visit', 'cat__CollectionMethod_in_person',
+    'cat__CollectionMethod_telemedicine', 'cat__Generation_Baby Boomer', 'cat__Generation_Generation X',
+    'cat__Generation_Generation Z', 'cat__Generation_Millennial', 'cat__Generation_Silent Generation'
 ]
 
 
@@ -61,41 +61,41 @@ def scaled_data_to_classifier_format(scaled_data):
     return classifier_data
     
 
-def create_transaction_data(amount, hour, tx_type, card_present, age, tenure, 
-                          txn_24h, avg_30d, merchant_risk, device_trust, 
-                          ip_reputation, dist_from_home, latitude, longitude, 
-                          device_type, merchant_cat, channel):
-    """Create a single-row DataFrame with transaction data"""
+def create_patient_data(bmi, visit_hour, treatment_arm, in_person, age, years_condition, 
+                       prior_meds, baseline_biomarker, comorbidity_score, adherence, 
+                       genetic_risk, distance_care, latitude, longitude, 
+                       visit_type, site_category, collection_method):
+    """Create a single-row DataFrame with clinical patient data"""
     
-    # Create timestamp for current time (you can modify this as needed)
-    current_time = time.time()
+    # Days since enrollment (simulate current trial day)
+    days_enrolled = random.uniform(1, 365)
     
-    # Create raw transaction data matching your expected structure
-    raw_data = {
-        'Time': current_time,
-        'Amount': amount,
+    # Create clinical patient data matching expected structure
+    patient_data = {
+        'Time': days_enrolled,
+        'BMI': bmi,
         'Age': age,
-        'Tenure': tenure,
-        'MerchantRisk': merchant_risk,
-        'DeviceTrust': device_trust,
-        'Txn24h': txn_24h,
-        'Avg30d': avg_30d,
-        'IPReputation': ip_reputation,
+        'YearsWithCondition': years_condition,
+        'ComorbidityScore': comorbidity_score,
+        'Adherence': adherence,
+        'PriorMedications': prior_meds,
+        'BaselineBiomarker': baseline_biomarker,
+        'GeneticRisk': genetic_risk,
         'Latitude': latitude,
         'Longitude': longitude,
-        'DistFromHome': dist_from_home,
-        'Hour': hour,
-        'TxType': tx_type,
-        'DeviceType': device_type,
-        'MerchantCat': merchant_cat,
-        'Channel': channel,
-        'CardPresent': card_present
+        'DistanceFromCare': distance_care,
+        'VisitHour': visit_hour,
+        'TreatmentArm': treatment_arm,
+        'VisitType': visit_type,
+        'SiteCategory': site_category,
+        'CollectionMethod': collection_method,
+        'InPerson': in_person
     }
     
     # Create DataFrame
-    df = pd.DataFrame([raw_data])
+    df = pd.DataFrame([patient_data])
     
-    # Add derived features
+    # Add derived clinical features
     df_with_features = add_derived_features(df)
     
     return df_with_features
@@ -203,55 +203,55 @@ if predict_button:
         time.sleep(2)  # Simulate API call
 
         
-        # Create the transaction data with derived features
-        transaction_df = create_transaction_data(
-            amount=amount,
-            hour=hour,
-            tx_type=tx_type,
-            card_present=card_present,
+        # Create the patient data with derived clinical features
+        patient_df = create_patient_data(
+            bmi=amount,  # amount variable maps to BMI
+            visit_hour=hour,
+            treatment_arm=tx_type,
+            in_person=card_present,
             age=age,
-            tenure=tenure,
-            txn_24h=txn_24h,
-            avg_30d=avg_30d,
-            merchant_risk=merchant_risk,
-            device_trust=device_trust,
-            ip_reputation=ip_reputation,
-            dist_from_home=dist_from_home,
+            years_condition=tenure,
+            prior_meds=txn_24h,
+            baseline_biomarker=avg_30d,
+            comorbidity_score=merchant_risk,
+            adherence=device_trust,
+            genetic_risk=ip_reputation,
+            distance_care=dist_from_home,
             latitude=latitude,
             longitude=longitude,
-            device_type=device_type,
-            merchant_cat=merchant_cat,
-            channel=channel
+            visit_type=device_type,
+            site_category=merchant_cat,
+            collection_method=channel
         )
         
-        print("Here's the data we have right now:")
-        print(transaction_df.to_dict('records')[0])
+        print("Here's the patient data we have:")
+        print(patient_df.to_dict('records')[0])
         
-        # Create JSON structure matching your expected format
-        transaction_json = {
+        # Create JSON structure for clinical API
+        patient_json = {
             "data": {
-                "Time": str(transaction_df['Time'].iloc[0]),
-                "Amount": str(transaction_df['Amount'].iloc[0]),
-                "Age": str(transaction_df['Age'].iloc[0]),
-                "Tenure": str(transaction_df['Tenure'].iloc[0]),
-                "MerchantRisk": str(transaction_df['MerchantRisk'].iloc[0]),
-                "DeviceTrust": str(transaction_df['DeviceTrust'].iloc[0]),
-                "Txn24h": str(transaction_df['Txn24h'].iloc[0]),
-                "Avg30d": str(transaction_df['Avg30d'].iloc[0]),
-                "IPReputation": str(transaction_df['IPReputation'].iloc[0]),
-                "Latitude": str(transaction_df['Latitude'].iloc[0]),
-                "Longitude": str(transaction_df['Longitude'].iloc[0]),
-                "DistFromHome": str(transaction_df['DistFromHome'].iloc[0]),
-                "Hour": str(transaction_df['Hour'].iloc[0]),
-                "TxType": transaction_df['TxType'].iloc[0],
-                "DeviceType": transaction_df['DeviceType'].iloc[0],
-                "MerchantCat": transaction_df['MerchantCat'].iloc[0],
-                "Channel": transaction_df['Channel'].iloc[0],
-                "CardPresent": str(transaction_df['CardPresent'].iloc[0]),
-                "amount_vs_avg30d_ratio": str(round(transaction_df['amount_vs_avg30d_ratio'].iloc[0], 2)),
-                "risk_score": str(round(transaction_df['risk_score'].iloc[0], 2)),
-                "trust_score": str(round(transaction_df['trust_score'].iloc[0], 2)),
-                "generation": transaction_df['generation'].iloc[0]
+                "Time": str(patient_df['Time'].iloc[0]),
+                "BMI": str(patient_df['BMI'].iloc[0]),
+                "Age": str(patient_df['Age'].iloc[0]),
+                "YearsWithCondition": str(patient_df['YearsWithCondition'].iloc[0]),
+                "ComorbidityScore": str(patient_df['ComorbidityScore'].iloc[0]),
+                "Adherence": str(patient_df['Adherence'].iloc[0]),
+                "PriorMedications": str(patient_df['PriorMedications'].iloc[0]),
+                "BaselineBiomarker": str(patient_df['BaselineBiomarker'].iloc[0]),
+                "GeneticRisk": str(patient_df['GeneticRisk'].iloc[0]),
+                "Latitude": str(patient_df['Latitude'].iloc[0]),
+                "Longitude": str(patient_df['Longitude'].iloc[0]),
+                "DistanceFromCare": str(patient_df['DistanceFromCare'].iloc[0]),
+                "VisitHour": str(patient_df['VisitHour'].iloc[0]),
+                "TreatmentArm": patient_df['TreatmentArm'].iloc[0],
+                "VisitType": patient_df['VisitType'].iloc[0],
+                "SiteCategory": patient_df['SiteCategory'].iloc[0],
+                "CollectionMethod": patient_df['CollectionMethod'].iloc[0],
+                "InPerson": str(patient_df['InPerson'].iloc[0]),
+                "bmi_biomarker_ratio": str(round(patient_df['bmi_biomarker_ratio'].iloc[0], 2)),
+                "clinical_risk_score": str(round(patient_df['clinical_risk_score'].iloc[0], 2)),
+                "adherence_risk_balance": str(round(patient_df['adherence_risk_balance'].iloc[0], 2)),
+                "Generation": patient_df['Generation'].iloc[0]
             }
         }
 
@@ -330,10 +330,10 @@ if predict_button:
         ]
         
         final_risk_score = sum(risk_factors) / len(risk_factors)
-        is_fraud = final_risk_score > 0.4
+        is_adverse_event = final_risk_score > 0.4
         
         # Display clinical risk assessment results
-        if is_fraud:
+        if is_adverse_event:
             st.markdown(f"""
             <div class="prediction-box fraud-alert">
                 <h2>⚠️ HIGH RISK PATIENT</h2>

@@ -2,7 +2,7 @@
 from pathlib import Path
 import json
 from sklearn.naive_bayes import GaussianNB
-from exercises.d_TrainingAndEvaluation.generic_trainer import train_adverse_event_model
+from generic_trainer import train_adverse_event_model
 
 # Load DataFrame from dataset 
 try:
@@ -10,7 +10,7 @@ try:
     print('using workflow input: transformed_filename', transformed_df_filename)
 except FileNotFoundError as e:
     print('file not found error', e)
-    transformed_df_filename = 'transformed_cc_transactions.csv'
+    transformed_df_filename = 'transformed_trial_data.csv'
 
 model_name = 'GaussianNB'
 model_obj = GaussianNB()

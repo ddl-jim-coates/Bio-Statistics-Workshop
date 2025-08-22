@@ -7,7 +7,7 @@ from flytekitplugins.domino.task import DatasetSnapshot
 
 @workflow
 def clinical_trial_adverse_event_prediction_workflow():
-    transformed_filename = 'transformed_cc_transactions.csv'  # Keeping filename for compatibility
+    transformed_filename = 'transformed_trial_data.csv'  # Clinical trial data filename
 
     ada_training_task = DominoJobTask(
         name='Train AdaBoost classifier',

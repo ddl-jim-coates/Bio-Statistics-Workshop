@@ -12,7 +12,7 @@ def clinical_trial_adverse_event_prediction_workflow():
 
     ada_training_task = DominoJobTask(
         name='Train AdaBoost classifier',
-        domino_job_config=DominoJobConfig(Command="python exercises/d_TrainingAndEvaluation/trainer_ada.py", HardwareTierId="Large"),
+        domino_job_config=DominoJobConfig(Command="python exercises/d_TrainingAndEvaluation/trainer_ada.py", HardwareTierId="large-k8s"),
         inputs={'transformed_filename': str},
         outputs={'results': str},
         use_latest=True,
@@ -22,7 +22,7 @@ def clinical_trial_adverse_event_prediction_workflow():
 
     gnb_training_task = DominoJobTask(
         name='Train GaussianNB classifier',
-        domino_job_config=DominoJobConfig(Command="python exercises/d_TrainingAndEvaluation/trainer_gnb.py", HardwareTierId="Large"),
+        domino_job_config=DominoJobConfig(Command="python exercises/d_TrainingAndEvaluation/trainer_gnb.py", HardwareTierId="large-k8s"),
         inputs={'transformed_filename': str},
         outputs={'results': str},
         use_latest=True,
@@ -31,7 +31,7 @@ def clinical_trial_adverse_event_prediction_workflow():
     
     xgb_training_task = DominoJobTask(
         name='Train XGBoost classifier',
-        domino_job_config=DominoJobConfig(Command="python exercises/d_TrainingAndEvaluation/trainer_xgb.py", HardwareTierId="Large"),
+        domino_job_config=DominoJobConfig(Command="python exercises/d_TrainingAndEvaluation/trainer_xgb.py", HardwareTierId="large-k8s"),
         inputs={'transformed_filename': str},
         outputs={'results': str},
         use_latest=True,

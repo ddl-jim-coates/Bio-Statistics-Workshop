@@ -8,6 +8,7 @@ from flytekitplugins.domino.task import DatasetSnapshot
 @workflow
 def clinical_trial_adverse_event_prediction_workflow():
     transformed_filename = 'transformed_trial_data.csv'  # Clinical trial data filename
+    dataset_id = os.environ['dataset_id']
 
     ada_training_task = DominoJobTask(
         name='Train AdaBoost classifier',
@@ -16,7 +17,7 @@ def clinical_trial_adverse_event_prediction_workflow():
         outputs={'results': str},
         use_latest=True,
         cache=True,
-        DatasetSnapshots=[DatasetSnapshot(Id="68a8ac17ab06de1fa5c232aa", Version=1)]
+        DatasetSnapshots=[DatasetSnapshot(Id=dataset_id, Version=1)]
     )
 
     gnb_training_task = DominoJobTask(
@@ -26,7 +27,7 @@ def clinical_trial_adverse_event_prediction_workflow():
         outputs={'results': str},
         use_latest=True,
         cache=True,
-        DatasetSnapshots=[DatasetSnapshot(Id="68a8ac17ab06de1fa5c232aa", Version=1)]    )
+        DatasetSnapshots=[DatasetSnapshot(Id=dataset_id, Version=1)]    )
     
     xgb_training_task = DominoJobTask(
         name='Train XGBoost classifier',
@@ -35,7 +36,7 @@ def clinical_trial_adverse_event_prediction_workflow():
         outputs={'results': str},
         use_latest=True,
         cache=True,
-        DatasetSnapshots=[DatasetSnapshot(Id="68a8ac17ab06de1fa5c232aa", Version=1)]
+        DatasetSnapshots=[DatasetSnapshot(Id=dataset_id, Version=1)]
     )
 
     ada_results = ada_training_task(transformed_filename=transformed_filename)

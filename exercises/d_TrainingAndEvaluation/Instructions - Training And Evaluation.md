@@ -25,6 +25,10 @@ In governnace
 
 This concludes the "4. MODEL TRAINING and EVALUATION" section of the workshop.
 
+```
+pyflyte run --remote exercises/d_TrainingAndEvaluation/workflow.py clinical_trial_adverse_event_prediction_workflow
+```
+
 ## New Domino Concepts
 
 **Domino Flows:**

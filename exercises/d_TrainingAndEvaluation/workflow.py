@@ -11,7 +11,7 @@ def clinical_trial_adverse_event_prediction_workflow():
 
     ada_training_task = DominoJobTask(
         name='Train AdaBoost classifier',
-        domino_job_config=DominoJobConfig(Command="python exercises/d_TrainingAndEvaluation/trainer_ada.py"),
+        domino_job_config=DominoJobConfig(Command="python exercises/d_TrainingAndEvaluation/trainer_ada.py", HardwareTierId="Large"),
         inputs={'transformed_filename': str},
         outputs={'results': str},
         use_latest=True,
@@ -21,17 +21,16 @@ def clinical_trial_adverse_event_prediction_workflow():
 
     gnb_training_task = DominoJobTask(
         name='Train GaussianNB classifier',
-        domino_job_config=DominoJobConfig(Command="python exercises/d_TrainingAndEvaluation/trainer_gnb.py"),
+        domino_job_config=DominoJobConfig(Command="python exercises/d_TrainingAndEvaluation/trainer_gnb.py", HardwareTierId="Large"),
         inputs={'transformed_filename': str},
         outputs={'results': str},
         use_latest=True,
         cache=True,
-        DatasetSnapshots=[DatasetSnapshot(Id="68a8ac17ab06de1fa5c232aa", Version=1)]
-    )
+        DatasetSnapshots=[DatasetSnapshot(Id="68a8ac17ab06de1fa5c232aa", Version=1)]    )
     
     xgb_training_task = DominoJobTask(
         name='Train XGBoost classifier',
-        domino_job_config=DominoJobConfig(Command="python exercises/d_TrainingAndEvaluation/trainer_xgb.py"),
+        domino_job_config=DominoJobConfig(Command="python exercises/d_TrainingAndEvaluation/trainer_xgb.py", HardwareTierId="Large"),
         inputs={'transformed_filename': str},
         outputs={'results': str},
         use_latest=True,

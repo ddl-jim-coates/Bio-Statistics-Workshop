@@ -270,7 +270,7 @@ if predict_button:
                     feature_scaling_auth,
                     feature_scaling_auth
                 ),
-                json=transaction_json
+                json=patient_json
             )
             
             if response.status_code == 200:
